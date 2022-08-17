@@ -1,0 +1,44 @@
+@keyframes searchDown{
+    from {top: -800px;}
+    to {top: 0px}
+
+}
+
+@keyframes searchUp{
+    from {top: 0px}
+    to {top: 60px}
+}
+
+body{
+    height: 100%;
+    overflow-x: hidden;
+}
+.ons-button {
+    padding: 7px;
+}
+
+.dotsclass {
+    position: absolute;
+    right: 10px;
+    padding-top: 15px;
+    color: rgb(216, 5, 5)
+}
+
+.uploadMedia {
+    position: relative;
+    bottom: 55px;
+
+}
+
+.time {
+    position: relative;
+    padding-left: 7px;
+}
+
+#required {
+    color: rgb(216, 5, 5);
+    position: absolute;
+    top: 35px;
+    right: 15px;
+    display: none;
+}

@@ -1,0 +1,379 @@
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script src="main.js"></script>
+
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="apple-touch-icon" href="icons/icon.png">
+    <link rel="apple-touch-icon" href="touch-icon-iphone.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="touch-icon-iphone-retina.png">
+    <link rel="apple-touch-icon" sizes="167x167" href="touch-icon-ipad-retina.png">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Pocket Agenda">
+
+    <!--Onsen UI Elements-->
+    <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
+    <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
+    <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
+    <!--Onsen UI Elements-->
+
+    <!--Jquery CDN-->
+    <script src="jQuery/jquery-3.4.1.min.js"></script>
+    <!--Jquery CDN-->
+</head>
+
+<body>
+
+
+    <ons-navigator swipeable id="myNavigator" page="page1.html"></ons-navigator>
+
+
+    <template id="page1.html">
+        <ons-page id="page1">
+
+
+            <p style="text-align: center; margin-top: 10px; position: relative; display:none; margin-bottom: 0px; top:0px;"
+                id="search">
+                <ons-search-input placeholder="Search" style="width: 350px;">
+                </ons-search-input>
+            </p>
+
+            <ons-toolbar style="position: relative; margin-bottom: 0px;">
+                <div class="center" style="position: relative;">Upcoming</div>
+                <img src="icons/search.png"
+                    style="padding: 0px; width: 25px; height: 25px; margin-top: 10px; position: absolute; right:0px; padding-right: 6px;"
+                    onclick="search()">
+            </ons-toolbar>
+
+            <div style="text-align: center; color:gray; padding: 0px; display: block;" id="noUpcoming">
+                <h3>No upcoming assignments</h3>
+                <p>Tap the + button to add your first assignment</p>
+            </div>
+
+            <div id="everyCard">
+
+            </div>
+
+
+            <ons-fab position="bottom right" id="push-button">
+                <ons-icon icon="md-plus"></ons-icon>
+            </ons-fab>
+
+            <script>
+
+                if (JSON.parse(localStorage.getItem("everyAssignment")).length == 0) {
+                    document.getElementById("noUpcoming").style.display = "block";
+                } else {
+                    document.getElementById("noUpcoming").style.display = "none";
+                }
+
+                function submitFunc() {
+
+                    var inputValue = document.getElementById("assignmentName").value;
+                    var courseValue = document.getElementById("courseName").value;
+                    var descriptionValue = document.getElementById("descriptionName").value;
+
+                    var m = document.getElementById("Month");
+                    var months = m.options[m.selectedIndex].text;
+
+                    var d = document.getElementById("Day");
+                    var days = d.options[d.selectedIndex].text;
+
+                    var y = document.getElementById("Year");
+                    var years = y.options[y.selectedIndex].text;
+
+                    var dateValue = months + " " + days + ", " + years;
+
+                    var PMAM = document.getElementById("time");
+                    var AMPM = PMAM.options[PMAM.selectedIndex].text;
+
+                    var hours = document.getElementById("hour").value;
+                    var minutes = document.getElementById("minute").value;
+
+                    var totalTime = hours + ":" + minutes + " " + AMPM
+
+                    var totalLinks = JSON.parse(localStorage.getItem("links"));
+
+
+
+                    if (inputValue == "") {
+                        ons.notification.toast('Please fill out required fields', {
+                            timeout: 2000
+                        });
+                        document.getElementById("required").style.display = "block";
+
+                        var nameAssignment = document.getElementById("assignmentName");
+                    } else {
+                        ons.notification.toast('Record Created!', {
+                            timeout: 2000
+                        });
+                        document.getElementById("progress").style.display = "block"
+
+
+                        allAssignments.push(inputValue)
+                        allCourses.push(courseValue)
+                        allDescriptions.push(descriptionValue)
+                        allDates.push(dateValue)
+                        allTimes.push(totalTime)
+                        allLinks.push(totalLinks);
+
+                        //save input values to localStorage
+                        localStorage.setItem("everyAssignment", JSON.stringify(allAssignments));
+                        localStorage.setItem("everyCourse", JSON.stringify(allCourses));
+                        localStorage.setItem("everyDescription", JSON.stringify(allDescriptions));
+                        localStorage.setItem("everyDate", JSON.stringify(allDates));
+                        localStorage.setItem("everyTime", JSON.stringify(allTimes));
+                        localStorage.setItem("everyLink", JSON.stringify(allLinks));
+
+                        location.reload()
+
+
+
+                    }
+                }
+
+                //testing (again
+                var finalArray = JSON.parse(localStorage.getItem("everyAssignment"));
+                console.log(finalArray)
+
+                var finalCourseArray = JSON.parse(localStorage.getItem("everyCourse"));
+                console.log(finalCourseArray)
+
+                var finalDescriptionArray = JSON.parse(localStorage.getItem("everyDescription"));
+                console.log(finalDescriptionArray)
+
+                var finalDateArray = JSON.parse(localStorage.getItem("everyDate"));
+                console.log(finalDateArray)
+
+                var finalTimeArray = JSON.parse(localStorage.getItem("everyTime"));
+                console.log(finalTimeArray)
+
+                var finalLinkArray = JSON.parse(localStorage.getItem("everyLink"));
+                console.log(finalLinkArray)
+
+
+                var card = document.getElementById("everyCard")
+                card.innerHTML = "";
+
+
+
+                finalArray.forEach(function (el, i) {
+
+                    //Creating Dates for the card
+
+                    var onsenCard = document.createElement("ons-card");
+
+
+                    onsenCard.innerHTML = `<h1>${finalArray[i]}</h1>
+                            <h3>${finalCourseArray[i]}</h3>
+                            <h4>${"Due by: " + finalDateArray[i] + " at " + finalTimeArray[i]}</h4>
+                            <h4>${finalDescriptionArray[i]}</h4>
+                            <h4 style="color: #0076FF; text-decoration: underline;" onclick="myFunc()">${finalLinkArray[i]}</h4>
+                    `
+
+                    var deleteBtn = document.createElement("ons-button")
+                    deleteBtn.innerHTML = "Delete"
+                    deleteBtn.setAttribute("modifier", "quiet")
+                    deleteBtn.setAttribute("class", "dotsClass")
+                    deleteBtn.setAttribute("style", "color: rgb(216, 5, 5)")
+                    deleteBtn.onclick = function () {
+                        ons.notification.confirm({
+                            message: 'Are you sure you want to delete?',
+                            title: 'Confirm',
+                            buttonLabels: ['Yes', 'No'],
+                            animation: 'default', // or 'slide'
+                            primaryButtonIndex: 1,
+                            cancelable: true,
+                            callback: function (index) {
+                                switch (index) {
+                                    case 0:
+                                        ons.notification.toast('Record removed', {
+                                            timeout: 2000
+                                        });
+
+                                        let modifyAssignment = JSON.parse(localStorage.getItem("everyAssignment")).filter(el => el != finalArray[i])
+                                        localStorage.setItem("everyAssignment", JSON.stringify(modifyAssignment))
+
+                                        let modifyCourse = JSON.parse(localStorage.getItem("everyCourse")).filter(el => el != finalCourseArray[i])
+                                        localStorage.setItem("everyCourse", JSON.stringify(modifyCourse))
+
+                                        let modifyDescription = JSON.parse(localStorage.getItem("everyDescription")).filter(el => el != finalDescriptionArray[i])
+                                        localStorage.setItem("everyDescription", JSON.stringify(modifyDescription))
+
+                                        onsenCard.style.display = "none";
+                                        card.removeChild(onsenCard)
+                                        location.reload()
+                                        break;
+                                    case 1:
+                                        break;
+                                }
+                            }
+                        });
+                    }
+
+                    onsenCard.append(deleteBtn)
+                    card.append(onsenCard)
+
+                });
+
+                function myFunc() {
+                    ons.notification.toast('Link Copied to clipboard', {
+                        timeout: 2000
+                    });
+
+                }
+
+
+            </script>
+
+
+        </ons-page>
+    </template>
+
+    <template id="page2.html">
+        <ons-page id="page2">
+            <ons-toolbar>
+                <div class="left">
+                    <ons-back-button>Upcoming</ons-back-button>
+                </div>
+                <div class="center"></div>
+            </ons-toolbar>
+            <ons-progress-bar id="progress" style="display:none" indeterminate
+                style="position: absolute; margin: 0px; padding: 0px;">
+            </ons-progress-bar>
+
+            <h3 style="padding: 7px; padding-bottom: 0px;">Assignment Information</h3>
+
+            <ons-input id="assignmentName" modifier="underbar" placeholder="Name *" float style="padding: 7px;">
+            </ons-input>
+            <h3 id="required">(Required)</h3>
+            <br>
+            <ons-input id="courseName" modifier="underbar" placeholder="Course" float style="padding: 7px;"></ons-input>
+            <br>
+            <ons-input id="descriptionName" modifier="underbar" placeholder="Description" float style="padding: 7px;">
+            </ons-input>
+            <br><br>
+            <h3 style="padding-left: 7px; padding-top: 7px; position: absolute;">Due By</h3>
+            <br><br>
+            <ons-select style="padding: 7px; padding-top: 0px;" id="Month">
+                <option value="January">January</option>
+                <option value="Febuary">Febuary</option>
+                <option value="March">March</option>
+                <option value="April">April</option>
+                <option value="May">May</option>
+                <option value="June">June</option>
+                <option value="July">July</option>
+                <option value="August">August</option>
+                <option value="September">September</option>
+                <option value="October">October</option>
+                <option value="November">November</option>
+                <option value="December">December</option>
+            </ons-select>
+
+            <ons-select style="padding: 7px; padding-top: 0px;" id="Day">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+                <option value="21">21</option>
+                <option value="22">22</option>
+                <option value="23">23</option>
+                <option value="24">24</option>
+                <option value="25">25</option>
+                <option value="26">26</option>
+                <option value="27">27</option>
+                <option value="28">28</option>
+                <option value="29">29</option>
+                <option value="30">30</option>
+            </ons-select>
+
+            <ons-select style="padding: 7px; padding-top: 0px;" id="Year">
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+                <option value="2022">2022</option>
+                <option value="2023">2023</option>
+                <option value="2024">2024</option>
+                <option value="2025">2025</option>
+                <option value="2026">2026</option>
+                <option value="2027">2027</option>
+                <option value="2028">2028</option>
+                <option value="2029">2029</option>
+                <option value="2030">2030</option>
+            </ons-select>
+            <br>
+            <h3 style="padding-left: 7px; padding-top: 7px; position: relative;">Time</h3>
+            <div class="time">
+                <input type="number" min="1" max="12"
+                    style="position: absolute; text-align: center; background: none; border: none; width: 40px" placeholder="Hour"
+                    id="hour">
+                <p style="margin-left: 60px;">:</p>
+                <input type="number" min="0" max="59"
+                    style="position: absolute; left: 75px; top: 0px; text-align: center; background: none; border: none; width: 45px"
+                    placeholder="Minute" id="minute">
+                <ons-select style="margin-left: 130px; position: absolute; top: -4px;" id="time">
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                </ons-select>
+            </div>
+            <br>
+
+
+            <ons-button modifier="quiet" style="padding: 10px;" onclick="showOptions()" id="showLink">Show Advanced
+                Options</ons-button>
+
+            <div class="advancedOptions" id="advancedOptions" style="padding: 7px; display: none;">
+
+                <form method="POST" action="/" enctype="multipart/form-data">
+                    <input type="file" id="real-file" hidden="hidden" accept="image/*" onchange="previewImage();">
+
+                    <br><br><br>
+                    <ons-button onclick="linkFunc()" class="uploadMedia">Add Link</ons-button>
+
+
+                    <ons-button onclick="clrData()" id="clearData"
+                        style="background-color: rgb(216, 5, 5); position: relative;" modifier="large">Clear
+                        Data
+                        <img src="icons/iosTrash.png"
+                            style="position: absolute; width: 22px; height: auto; margin-top: 4px; margin-left: 5px;">
+                    </ons-button>
+                    <br><br>
+                </form>
+            </div>
+
+            <ons-button class="submitBtn" modifier="large" onclick="submitFunc()"
+                style="position: fixed; bottom: 0px; left: 0px">
+                Submit
+            </ons-button>
+
+            <script>
+                var realFileBtn = document.getElementById("real-file");
+                var customBtn = document.getElementById("uploadMedia");
+                var customTxt = document.getElementById("fileText");
+
+            </script>
+
+
+            </ons-button>
+        </ons-page>
+    </template>
+</body>
+
+</html>
